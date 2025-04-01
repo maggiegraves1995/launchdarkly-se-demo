@@ -86,7 +86,7 @@ You can measure whether the new `testimonials_section` improves engagement.
    - Event Key: `viewed_testimonials`
    - Kind: Page View / Custom
 
-2. In `App.jsx`, the following is tracked:
+2. In `App.js`, the following is tracked:
 ```js
 if (flags.testimonials_section && ldClient) {
   ldClient.track('viewed_testimonials');
