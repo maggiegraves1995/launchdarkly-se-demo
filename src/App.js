@@ -107,7 +107,7 @@ function App() {
 }
 
 export default withLDProvider({
-  clientSideID: '67ebfadb90496b098b851515',
+  clientSideID: 'YOUR_CLIENT_SIDE_ID', // client side ID for Prod
   reactOptions: {
     useCamelCaseFlagKeys: false
   }
