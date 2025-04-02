@@ -103,10 +103,10 @@ if (flags.testimonials_section && ldClient) {
 
 ###  How to Test
 1. **Part 1: Release and Remediate**
-  - Toggle **feature_demo** feature flag "On" & "Off"
-  - **Expected Result**
-     - When flag is "**On**" message will display on React App "Feature is On"
-     - When flag is "**Off**" message will display on React App "Feature is Off"
+    - Toggle **feature_demo** feature flag "On" & "Off"
+    - **Expected Result**
+       - When flag is "**On**" message will display on React App "Feature is On"
+       - When flag is "**Off**" message will display on React App "Feature is Off"
    
 2. **Part 2: Target**
    - Toggle **testimonials_section** flag "On"
