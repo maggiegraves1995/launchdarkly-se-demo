@@ -10,6 +10,7 @@ This is a React app demonstrating LaunchDarkly feature flag usage for release/re
 - Dropdown menu to demo multiple user personas
 - Clean and styled UI for demo presentation
 - Custom event tracking + experimentation setup (need to run this for some time to generate actual results)
+- **Please view How to Test section to validate results**
 
 ---
 
@@ -28,7 +29,7 @@ npm install
 
 ### 3. Replace SDK Key
 - Open `App.js`
-- Replace `'YOUR_CLIENT_SIDE_ID'` with your actual LaunchDarkly **Client-side ID** (from PROD enviornment in this case)
+- Replace `'YOUR_CLIENT_SIDE_ID'` with your actual LaunchDarkly **Client-side ID** (using PROD enviornment in this case)
 
 ### 4. Run the App
 ```bash
@@ -96,10 +97,29 @@ if (flags.testimonials_section && ldClient) {
 3. Go to the flag → “Experiments” tab → Create experiment:
    - Use flag: `testimonials_section`
    - Assign metric: `viewed-testimonials`
-   - Use 50/50 spli
+   - Use 50/50 split
 
 4. Run experiment, collect data, and measure impact
 
----
+###  How to Test
+1. **Part 1: Release and Remediate**
+  - Toggle **feature_demo** feature flag "On" & "Off"
+  - **Expected Result**
+     - When flag is "**On**" message will display on React App "Feature is On"
+     - When flag is "**Off**" message will display on React App "Feature is Off"
+   
+2. **Part 2: Target**
+   - Toggle **testimonials_section** flag "On"
+   - Go to React App and switch between the 3 users
+   - **Expected Result**
+     - When **Alice** is selected - Testimonial Section will appear on page
+     - When **Carol** or **Bob** are selected - Page will remain the same & testimonial section will not be shown
+    
+3. **Part 3: Experiment**
+   - Run Experiment in LaunchDarkly
+   - Toggle between users in the React App to simulate page views
+   - Stop Experiment after some time
+   - Analyze Results 
+
 
 
