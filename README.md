@@ -8,8 +8,7 @@ This is a React app demonstrating LaunchDarkly feature flag usage for release/re
 - Real-time toggles (no page reload needed)
 - User targeting by attributes (user key & team)
 - Dropdown menu to demo multiple user personas
-- Clean and styled UI for demo presentation
-- Custom event tracking + experimentation setup (need to run this for some time to generate actual results)
+- Experimentation setup (need to run this for some time to generate actual results)
 - **Please view How to Test section to validate results**
 
 ---
