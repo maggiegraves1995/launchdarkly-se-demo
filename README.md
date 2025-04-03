@@ -13,7 +13,7 @@ This is a React app demonstrating LaunchDarkly feature flag usage for release/re
 
 ---
 
-## Setup Instructions
+## React App Setup Instructions
 
 ### 1. Clone the Repo
 ```bash
@@ -37,69 +37,88 @@ npm start
 The app will be available at (http://localhost:3000)
 
 ---
+##  LaunchDarkly Setup Guide
 
-## Feature Flags Used
+### 1. Create a LaunchDarkly Account
+- Go to [https://launchdarkly.com](https://launchdarkly.com)
+- Sign up or log in
 
-### `feature_demo`
-- A general feature toggle to demonstrate basic flagging, release, and remediation
+### 2. Create a Project and Environment
+1. Click your avatar (top right) → **Account Settings**
+2. Under **Projects**, click **“Create project”**
+   - Project Name: `SE Homework`
+   - Environments: Use default (e.g., `Production`)
+3. Once created, go to the **Production** environment
 
-### `testimonials_section`
+### 3. Get Your Client-Side SDK Key
+1. Go to **Account Settings → Projects → Environments → Production**
+2. Under **Client-side ID**, copy the key
+3. In your `App.js`, replace `'YOUR_CLIENT_SIDE_ID'` with this value
+
+> Only use the **Client-side ID** — not the SDK or mobile key.
+
+### 4. Create Feature Flags
+
+#### A. `feature_demo`
+-- A general feature toggle to demonstrate basic flagging, release, and remediation
+1. Go to **Feature Flags**
+2. Click **“+ Create flag”**
+   - Name: `Feature Demo`
+   - Key: `feature_demo`
+   - Type: Boolean (true/false)
+3. Enable:
+   - “SDKs using Client-side ID”
+4. Save the flag
+
+#### B. `testimonials_section`
 - A new landing page component shown based on targeting rules
 - Also used in the experimentation setup (see below)
+1. Create another flag:
+   - Name: `Testimonials Section`
+   - Key: `testimonials_section`
+   - Type: Boolean
+2. Enable:
+   - “SDKs using Client-side ID”
+3. Save the flag
 
----
+### 5. Set Up Targeting for `testimonials_section`
+1. Open the `testimonials_section` flag
+2. Toggle **Targeting ON**
+3. Add **individual targeting**:
+   - User key: `user789`
+   - Serve: `true`
+4. Add **rule-based targeting**:
+   - Attribute: `team` **is** `marketing`
+   - Serve: `true`
+5. Set default rule (everyone else): `false`
+6. Click **Save changes**
 
-## User Context Switching
-Use the dropdown in the UI to instantly switch between demo users:
-- **Alice** (marketing)
-- **Bob** (finance)
-- **Carol** (engineering)
+### 6. Create a Metric for Experimentation
+1. Go to **Metrics** (left sidebar)
+2. Click **“+ Create metric”**
+   - Name: `Viewed Testimonials`
+   - Key: `viewed-testimonials`
+   - Kind: Custom
+   - Event key: `viewed_testimonials`
+   - Unit: Count
+3. Save the metric
 
-Each has a unique key, team, and location used for targeting.
-
----
-
-## Targeting Setup in LaunchDarkly
-
-1. Go to `testimonials_section` flag in LaunchDarkly
-2. Enable targeting
-3. Add individual targeting for key `user789` (Alice)
-4. Add rule-based targeting:
-   - If `team` is `marketing`, serve true
-
-Users who don’t match any rule will not see the section.
-
----
-
-## Experimentation
-
-You can measure whether the new `testimonials_section` improves engagement.
-
-### How it Works
+### 7. Create an Experiment
+- You can measure whether the new `testimonials_section` improves engagement.
+1. Go to the `testimonials_section` flag → **Experiments** tab
+2. Click **“Create experiment”**
+   - Name: `Testimonials Experiment`
+   - Flag: `testimonials_section`
+   - Environment: `Production`
+   - Metric: `viewed-testimonials`
+   - Target audience: All users (or just `marketing`)
+   - Traffic split: 50/50 (or adjust)
+3. Click **Start Experiment**
+- **How it Works**
 - A custom metric `viewed_testimonials` is fired when the section is shown
 - An experiment is created around the `testimonials_section` flag
 
-### Setup Steps
-1. Go to **Metrics** → Create metric:
-   - Name: Viewed Testimonials
-   - Key: `viewed-testimonials`
-   - Event Key: `viewed_testimonials`
-   - Kind: Page View / Custom
-
-2. In `App.js`, the following is tracked:
-```js
-if (flags.testimonials_section && ldClient) {
-  ldClient.track('viewed_testimonials');
-}
-```
-
-3. Go to the flag → “Experiments” tab → Create experiment:
-   - Use flag: `testimonials_section`
-   - Assign metric: `viewed-testimonials`
-   - Use 50/50 split
-
-4. Run experiment, collect data, and measure impact
-
+---
 ###  How to Test
 1. **Part 1: Release and Remediate**
     - Toggle **feature_demo** feature flag "On" & "Off"
