@@ -310,7 +310,6 @@ function App() {
 export default withLDProvider({
 
   clientSideID: '67ebfadb90496b098b851515',
-  reactOptions: { useCamelCaseFlagKeys: false }
   reactOptions: {
     useCamelCaseFlagKeys: false
   }
