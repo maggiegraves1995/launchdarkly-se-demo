@@ -1,70 +1,143 @@
-# Getting Started with Create React App
+# LaunchDarkly SE Homework
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a React app demonstrating LaunchDarkly feature flag usage for release/remediation, targeted rollout, experimentation, and real-time updates.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Feature Flag Integration using `launchdarkly-react-client-sdk`
+- Real-time toggles (no page reload needed)
+- User targeting by attributes (user key & team)
+- Dropdown menu to demo multiple user personas
+- Experimentation setup (need to run this for some time to generate actual results)
+- **Please view How to Test section to validate results**
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## React App Setup Instructions
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. Clone the Repo
+```bash
+git clone https://github.com/maggiegraves1995/launchdarkly-se-demo.git
+cd launchdarkly-se-demo
+```
 
-### `npm test`
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 3. Replace SDK Key
+- Open `App.js`
+- Replace `'YOUR_CLIENT_SIDE_ID'` with your actual LaunchDarkly **Client-side ID** (using PROD enviornment in this case)
 
-### `npm run build`
+### 4. Run the App
+```bash
+npm start
+```
+The app will be available at (http://localhost:3000)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
+##  LaunchDarkly Setup Guide
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Create a LaunchDarkly Account
+- Go to [https://launchdarkly.com](https://launchdarkly.com)
+- Sign up or log in
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Create a Project and Environment
+1. Click your avatar (top right) → **Account Settings**
+2. Under **Projects**, click **“Create project”**
+   - Project Name: `SE Homework`
+   - Environments: Use default (e.g., `Production`)
+3. Once created, go to the **Production** environment
 
-### `npm run eject`
+### 3. Get Your Client-Side SDK Key
+1. Go to **Account Settings → Projects → Environments → Production**
+2. Under **Client-side ID**, copy the key
+3. In your `App.js`, replace `'YOUR_CLIENT_SIDE_ID'` with this value
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+> Only use the **Client-side ID** — not the SDK or mobile key.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4. Create Feature Flags
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### A. `feature_demo`
+-- A general feature toggle to demonstrate basic flagging, release, and remediation
+1. Go to **Feature Flags**
+2. Click **“+ Create flag”**
+   - Name: `Feature Demo`
+   - Key: `feature_demo`
+   - Type: Boolean (true/false)
+3. Enable:
+   - “SDKs using Client-side ID”
+4. Save the flag
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### B. `testimonials_section`
+- A new landing page component shown based on targeting rules
+- Also used in the experimentation setup (see below)
+1. Create another flag:
+   - Name: `Testimonials Section`
+   - Key: `testimonials_section`
+   - Type: Boolean
+2. Enable:
+   - “SDKs using Client-side ID”
+3. Save the flag
 
-## Learn More
+### 5. Set Up Targeting for `testimonials_section`
+1. Open the `testimonials_section` flag
+2. Toggle **Targeting ON**
+3. Add **individual targeting**:
+   - User key: `user789`
+   - Serve: `true`
+4. Add **rule-based targeting**:
+   - Attribute: `team` **is** `marketing`
+   - Serve: `true`
+5. Set default rule (everyone else): `false`
+6. Click **Save changes**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 6. Create a Metric for Experimentation
+1. Go to **Metrics** (left sidebar)
+2. Click **“+ Create metric”**
+   - Name: `Viewed Testimonials`
+   - Key: `viewed-testimonials`
+   - Kind: Custom
+   - Event key: `viewed_testimonials`
+   - Unit: Count
+3. Save the metric
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 7. Create an Experiment
+- You can measure whether the new `testimonials_section` improves engagement.
+1. Go to the `testimonials_section` flag → **Experiments** tab
+2. Click **“Create experiment”**
+   - Name: `Testimonials Experiment`
+   - Flag: `testimonials_section`
+   - Environment: `Production`
+   - Metric: `viewed-testimonials`
+   - Target audience: All users (or just `marketing`)
+   - Traffic split: 50/50 (or adjust)
+3. Click **Start Experiment**
+- **How it Works**
+- A custom metric `viewed_testimonials` is fired when the section is shown
+- An experiment is created around the `testimonials_section` flag
 
-### Code Splitting
+---
+###  How to Test
+1. **Part 1: Release and Remediate**
+    - Toggle **feature_demo** feature flag "On" & "Off"
+    - **Expected Result**
+       - When flag is "**On**" message will display on React App "Feature is On"
+       - When flag is "**Off**" message will display on React App "Feature is Off"
+   
+2. **Part 2: Target**
+   - Toggle **testimonials_section** flag "On"
+   - Go to React App and switch between the 3 users
+   - **Expected Result**
+     - When **Alice** is selected - Testimonial Section will appear on page
+     - When **Carol** or **Bob** are selected - Page will remain the same & testimonial section will not be shown
+    
+3. **Part 3: Experiment**
+   - Run Experiment in LaunchDarkly
+   - Toggle between users in the React App to simulate page views
+   - Stop Experiment after some time
+   - Analyze Results 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

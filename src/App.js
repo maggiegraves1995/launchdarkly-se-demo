@@ -308,8 +308,13 @@ function App() {
 }
 
 export default withLDProvider({
+
   clientSideID: '67ebfadb90496b098b851515',
   reactOptions: { useCamelCaseFlagKeys: false }
+  reactOptions: {
+    useCamelCaseFlagKeys: false
+  }
+
 })(App);
 
 const styles = {
@@ -326,3 +331,6 @@ const styles = {
     backgroundColor: '#fee2e2', color: '#991b1b', padding: '1rem', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '1rem'
   }
 };
+
+
+
